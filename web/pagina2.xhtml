@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+
+        <h:form>
+            <p:commandButton icon="ui-icon-circle-arrow-w" title="Direcciones" value="Volver atras" action="index"/>
+            <p:commandButton value="Agregar Dirección" actionListener="#{direccionController.limpiarDireccion()}" oncomplete="PF('dialogoAgregar').show();" update=":formAgregar" />
+            <p:separator/>
+        </h:form>
+        <h:form id="formListado">
+            <p:dataTable id="tablaDirecciones"  paginatorPosition="bottom" var="direccion" value="#{clienteController.cliente.direcciones}" paginator="true" rows="10" emptyMessage="No existen Direcciones">
+                <f:facet name="header" >
+                    Direcciones del cliente: 
+                    <p:panelGrid columns="2">
+                        <h:outputText value="ID"/>
+                        <h:outputText value="#{clienteController.cliente.id}"/>
+
+                        <h:outputText value="Nombre:"/>
+                        <h:outputText value="#{direccionController.cliente.nombre}"/>
+
+                        <h:outputText value="Apellido"/>
+                        <h:outputText value="#{direccionController.cliente.apellido}"/>
+                    </p:panelGrid>
+                </f:facet>
+                <p:column headerText="Código">
+                    <h:outputText value="#{direccion.id}" />
+                </p:column>
+                <p:column headerText="Dirección">
+                    <h:outputText value="#{direccion.detalle}" />
+                </p:column>
+                <p:column headerText="MODIFICAR" style="text-align: center">
+                    <p:commandButton icon="ui-icon-pencil" title="Modificar" oncomplete="PF('dialogoModificar').show();" update=":formModificar">
+                        <f:setPropertyActionListener target="#{direccionController.direccion}" value="#{direccion}"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column headerText="ELIMINAR" style="text-align: center">
+                    <p:commandButton icon="ui-icon-trash" title="Eliminar" oncomplete="PF('dialogoEliminar').show();" update=":formEliminar">
+                        <f:setPropertyActionListener target="#{direccionController.direccion}" value="#{direccion}"/>
+                    </p:commandButton>    
+                </p:column> 
+            </p:dataTable>
+        </h:form>
+                <h:form id="formAgregar">
+            <p:dialog id="dlgAgregar" header="Agregar dirección" widgetVar="dialogoAgregar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <p:panelGrid columns="2" style="margin: 0 auto;">                                
+                    <p:outputLabel value="Dirección:"/>
+                    <p:inputText value="#{direccionController.direccion.detalle}"/>
+                </p:panelGrid>
+                <p:commandButton  value="Guardar" actionListener="#{direccionController.agregarDireccion()}" update=":formListado:tablaDirecciones" oncomplete="PF('dialogoAgregar').hide();"/>
+                <p:commandButton  value="Cancelar" onclick="PF('dialogoAgregar').hide();"/>
+            </p:dialog>
+                </h:form>
+            <h:form id="formModificar">
+            <p:dialog id="dlgModificar" header="Modificar Dirección" widgetVar="dialogoModificar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <p:panelGrid columns="2" style="margin: 0 auto;">
+                    <p:outputLabel style="visibility: hidden" value="Id:"/>
+                    <p:inputText style="visibility: hidden" value="#{direccionController.direccion.id}"/>
+                    <p:outputLabel value="Dirección:"/>
+                    <p:inputText value="#{direccionController.direccion.detalle}"/>
+     
+                </p:panelGrid>
+                <p:commandButton  value="Guardar" actionListener="#{direccionController.modificarDireccion()}" update=":formListado:tablaDirecciones" oncomplete="PF('dialogoModificar').hide();"/>
+                <p:commandButton  value="Cancelar" onclick="PF('dialogoModificar').hide();"/>
+            </p:dialog>
+        </h:form>
+        <h:form id="formEliminar">
+            <p:dialog id="dlgEliminar" header="Eliminar Dirección" widgetVar="dialogoEliminar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <h:outputText value="Desea eliminar este registro?"/>
+                <div hidden="true">
+                    <p:outputLabel value="Id:"/>
+                    <p:inputText value="#{direccionController.direccion.id}"/>
+                </div>
+                <p:commandButton  value="Si" actionListener="#{direccionController.eliminarDireccion()}" update=":formListado:tablaDirecciones" oncomplete="PF('dialogoEliminar').hide();"/>
+                <p:commandButton  value="No" onclick="PF('dialogoEliminar').hide();"/>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+

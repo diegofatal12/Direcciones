@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Busqueda de ventas</title>
+    </h:head>
+    <h:body>
+        <ui:insert name="header">
+            <ui:include src="/template/header.xhtml"/>
+        </ui:insert>
+        <p:growl id="growl" life="3000" />
+        <br/>
+        <h:form id="formListadoVentas" style="font-size: 10pt; color: #045491;">
+
+            <p:panelGrid columns="5">
+                <p:outputLabel value="Ingrese fecha inicial"  style="font-size: 10pt; font-weight:bold; color: #045491"/>
+                <p:calendar value="#{ventasPorFechaController.fecha1}" pattern="dd/MM/yyyy"/>
+                <p:outputLabel value="Ingrese fecha final" style="font-size: 10pt; font-weight:bold; color: #045491"/>
+                <p:calendar value="#{ventasPorFechaController.fecha2}" pattern="dd/MM/yyyy"/>
+                <p:commandButton value = "Buscar" action="#{ventasPorFechaController.consultarVentasPorFecha()}"
+                                 update=":formListadoVentas:tablaDirecciones,growl"  style="font-size: 10pt; font-weight:bold; color: #045491"/>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable 
+                id="tablaDirecciones" 
+                value="#{ventasPorFechaController.ventasPorFecha}" 
+                paginatorPosition="bottom" 
+                var="item" 
+
+                paginator="true" 
+                rows="10" 
+                emptyMessage="No existen ventas"
+                style="font-size: 10pt; color: #045491"
+                >
+                <f:facet name="header">
+                    <h:outputText value="Listado de ventas" style="font-size: 13pt; color: #045491"/>
+                </f:facet> 
+                <p:column headerText="Id Venta" style="width: 5%">
+                    <p:outputLabel value="#{item.idVenta}"/>
+                </p:column>
+                <p:column headerText="Id Cliente" style="width: 5%">
+                    <p:outputLabel value="#{item.idCliente}"/>
+                </p:column>
+                <p:column headerText="Cliente">
+                    <p:outputLabel value="#{item.cliente}"/>
+                </p:column>
+                <p:column headerText="Fecha" style="text-align: center">
+                    <p:outputLabel value="#{item.fecha}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Total" style="text-align: right">
+                    <p:outputLabel value="#{item.total}"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:commandButton value="Volver atras" action="#{ventasPorFechaController.volverAtras()}" style="font-size: 10pt; font-weight:bold; color: #045491"/>     
+        </h:form>
+    </h:body>
+</html>
+

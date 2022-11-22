@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:insert name="header">
+            <ui:include src="/template/header.xhtml"/>
+        </ui:insert>
+        <h:form id="formListado">
+            <p:dataTable id="tablaClientes" 
+                         rowKey="#{cliente.id}" 
+                         selectionMode="single" 
+                         selection="#{clienteController.registroSel}"  
+                         paginatorPosition="bottom" 
+                         var="cliente" 
+                         value="#{clienteController.listaCliente}" 
+                         paginator="true" 
+                         rows="10" 
+                         emptyMessage="No existen clientes"
+                         style="font-size: 10pt; color: #045491"
+                         >
+
+                <f:facet name="header">
+                    <h:outputText value="Listado de Clientes" style="font-size: 13pt; color: #045491"/>
+                </f:facet>
+                <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>                    
+                <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
+
+                <p:column headerText="Código" style="width: 5%;">
+                    <h:outputText value="#{cliente.id}" />
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{cliente.nombre}" />
+                </p:column> 
+                <p:column headerText="Apellido">
+                    <h:outputText value="#{cliente.apellido}" />
+                </p:column>
+                <p:column headerText="DNI">
+                    <h:outputText value="#{cliente.dni}" />
+                </p:column>
+                <p:column headerText="Teléfono">
+                    <h:outputText value="#{cliente.telefono}" />
+                </p:column>
+                <p:column headerText="País">
+                    <h:outputText value="#{cliente.pais}" />
+                </p:column>
+                <p:column headerText="Nota">
+                    <h:outputText value="#{cliente.nota}" />
+                </p:column>
+                <p:column headerText="DIRECCIONES" style="text-align: center">
+                    <p:commandButton  action="#{clienteController.gestionarDirecciones()}" icon="ui-icon-circle-zoomin" title="Direcciones">  
+                        <f:setPropertyActionListener value="#{cliente}" target="#{clienteController.registroSel}" />  
+                    </p:commandButton>
+                </p:column>
+                <f:facet name="footer">
+
+                    <p:commandButton id="createButton" ajax="true" icon="ui-icon-plus"   value="Crear"
+                                     actionListener="#{clienteController.nuevo()}" 
+                                     oncomplete="PF('dialogoAgregar').show();" 
+                                     update=":formAgregar"
+                                     style="font-size: 10pt; color: #045491"/>
+
+
+                    <p:commandButton actionListener="#{clienteController.vistaEditarCliente()}" id="editButton" ajax="true"  icon="ui-icon-pencil" value="Editar"                                 
+                                     oncomplete="PF('dialogoModificar').show();" update=":formModificar"
+                                     style="font-size: 10pt; color: #045491"/>
+
+                    <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Eliminar"
+                                     onclick="PF('cd').show()" disabled="#{empty clienteController.registroSel}"
+                                     style="font-size: 10pt; color: #045491">
+                        <f:setPropertyActionListener target="#{clienteController.registroSel}" value="#{cliente}"/>
+                    </p:commandButton>
+                    <p:confirmDialog message="Está seguro de eliminar el registro seleccionado?" appendTo="@(body)"
+                                     header="Eliminar registro" severity="alert" widgetVar="cd" style="font-size: 10pt; color: #045491">
+                        <p:commandButton actionListener="#{clienteController.eliminarCliente()}" 
+                                         update=":formListado:tablaClientes" value="Sí" oncomplete="PF('cd').hide()" style="font-size: 10pt; color: #045491"/>
+                        <p:commandButton value="No" onclick="PF('cd').hide();" type="button" style="font-size: 10pt; color: #045491"/>
+                    </p:confirmDialog>
+                </f:facet>                 
+            </p:dataTable>
+
+            <br/>
+            <p:commandButton action="#{clienteController.ventasPorFecha()}" value="Ventas por fecha" style="font-size: 10pt; color: #045491"/>
+            <p:commandButton action="#{clienteController.busquedaVentas()}" value="Ventas por nombre o apellido" style="font-size: 10pt; color: #045491"/> 
+            <p:commandButton action="#{clienteController.totalVentasCliente()}" value="Ventas de cada cliente y su total" style="font-size: 10pt; color: #045491"/>
+            <br/>
+            <!-- Este datatable lo vamos a usar despues
+            <p:dataTable id="viewDirecciones"
+                         value="#{clienteController.registroMod.direcciones}"
+                         var="itemDir"
+                         paginator="true" 
+                         rows="10" 
+                         emptyMessage="No existen clientes"
+                         style="font-size: 10pt; color: #045491"
+                         >
+                <p:column headerText="Código">
+                    <p:outputLabel value="#{itemDir.id}"/>
+                </p:column>
+                <p:column headerText="Detalle">
+                    <p:outputLabel value="#{itemDir.detalle}"/>
+                </p:column>
+            </p:dataTable>
+            -->
+        </h:form>
+        <h:form id="formAgregar" style="font-size: 10pt; color: #045491">
+            <p:dialog id="dlgAgregar" header="Agregar Cliente" widgetVar="dialogoAgregar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <p:panelGrid columns="2" style="margin: 0 auto;">                                
+                    <p:outputLabel value="nombre:"/>
+                    <p:inputText value="#{clienteController.registroMod.nombre}"/>
+                    <p:outputLabel value="Apellido:"/>
+                    <p:inputText value="#{clienteController.registroMod.apellido}"/>
+                    <p:outputLabel value="DNI:"/>
+                    <p:inputText value="#{clienteController.registroMod.dni}"/>
+                    <p:outputLabel value="Teléfono:"/>
+                    <p:inputText value="#{clienteController.registroMod.telefono}"/>
+                    <p:outputLabel value="País:"/>
+                    <p:inputText value="#{clienteController.registroMod.pais}"/>
+                    <p:outputLabel value="Nota:"/>
+                    <p:inputText value="#{clienteController.registroMod.nota}"/>
+                </p:panelGrid>
+                <p:commandButton  value="Guardar" actionListener="#{clienteController.agregarCliente()}" update=":formListado:tablaClientes" oncomplete="PF('dialogoAgregar').hide();"/>
+                <p:commandButton  value="Cancelar" onclick="PF('dialogoAgregar').hide();"/>
+            </p:dialog>
+        </h:form>
+        <h:form id="formModificar" style="font-size: 10pt; color: #045491">
+            <p:dialog id="dlgModificar" header="Modificar Cliente" widgetVar="dialogoModificar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <p:panelGrid columns="2" style="margin: 0 auto;">
+                    <p:outputLabel style="visibility: hidden" value="Id:"/>
+                    <p:inputText style="visibility: hidden" value="#{clienteController.registroSel.id}"/>
+                    <p:outputLabel value="nombre:"/>
+                    <p:inputText value="#{clienteController.registroSel.nombre}"/>
+                    <p:outputLabel value="Apellido:"/>
+                    <p:inputText value="#{clienteController.registroSel.apellido}"/>
+                    <p:outputLabel value="DNI:"/>
+                    <p:inputText value="#{clienteController.registroSel.dni}"/>
+                    <p:outputLabel value="Teléfono:"/>
+                    <p:inputText value="#{clienteController.registroSel.telefono}"/>
+                    <p:outputLabel value="País:"/>
+                    <p:inputText value="#{clienteController.registroSel.pais}"/>
+                    <p:outputLabel value="Nota:"/>
+                    <p:inputText value="#{clienteController.registroSel.nota}"/>
+                </p:panelGrid>
+                <p:commandButton  value="Guardar" actionListener="#{clienteController.modificarCliente()}" update=":formListado:tablaClientes" oncomplete="PF('dialogoModificar').hide();"/>
+                <p:commandButton  value="Cancelar" onclick="PF('dialogoModificar').hide();"/>
+            </p:dialog>
+        </h:form>
+        <h:form id="formEliminar" style="font-size: 10pt; color: #045491">
+            <p:dialog id="dlgEliminar" header="Eliminar Cliente" widgetVar="dialogoEliminar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <h:outputText value="Desea eliminar este registro?"/>
+                <p:commandButton  value="Si" actionListener="#{clienteController.eliminarCliente()}" update=":formListado:tablaClientes" oncomplete="PF('dialogoEliminar').hide();"/>
+                <p:commandButton  value="No" onclick="PF('dialogoEliminar').hide();"/>
+            </p:dialog>
+        </h:form>
+
+    </h:body>
+</html>
+

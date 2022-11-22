@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Busqueda de ventas</title>
+    </h:head>
+    <h:body>
+        <ui:insert name="header">
+            <ui:include src="/template/header.xhtml"/>
+        </ui:insert>
+        <p:growl id="growl" life="3000"/>
+        <br/>
+        <h:form id="formListadoVentas">
+            <p:panelGrid columns="3">
+                <p:outputLabel value=" Ingrese nombre o apellido" style="font-size: 10pt; font-weight: bold; color: #045491;"/>
+                <p:inputText value="#{busquedaVentaController.parametro}"/>
+                <p:commandButton value="Buscar" action="#{busquedaVentaController.buscar()}"
+                                 update=":formListadoVentas:tablaVentas,growl" style="font-size: 10pt; font-weight: bold; color: #045491"/>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable 
+                id="tablaVentas" 
+                value="#{busquedaVentaController.ventas}"
+                paginatorPosition="bottom"
+                var="item"
+                paginator="true"
+                rows="10"
+                emptyMessage="No existen ventas"
+                style="font-size: 10pt; color: #045491"
+                >
+                <f:facet name="header">
+                    <h:outputText value="Listado de ventas" style="font-size: 13pt; color: #045491"/>
+                </f:facet>
+                <p:column headerText="ID venta" style="width: 5%">
+                    <p:outputLabel value="#{item.idVenta}"/>
+                </p:column>
+                <p:column headerText="ID Cliente" style="width: 5%">
+                    <p:outputLabel value="#{item.idCliente}"/> 
+                </p:column>
+                <p:column headerText="Cliente">
+                    <p:outputLabel value="#{item.cliente}"/>
+                </p:column>
+                <p:column headerText="Fecha" style="text-align: center;">
+                    <p:outputLabel value="#{item.fecha}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:outputLabel> 
+                </p:column>
+                <p:column headerText="Total" style="text-align: right;">
+                    <p:outputLabel value="#{item.total}" />
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:commandButton value="Volver atras" action="#{busquedaVentaController.volverAtras()}" style="font-size: 10pt; color: #045491"/>
+        </h:form>
+    </h:body>
+</html>
+
