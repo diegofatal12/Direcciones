@@ -10,6 +10,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import modelo.Cliente;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import persistencia.HibernateUtil;
@@ -38,13 +39,14 @@ public class ClienteDao {
         return clientes;
     }
 
-    public Cliente getOne(Long id) {
+    public Cliente getOne(Integer id) {
         Session session = null;
         Cliente cliente = null;
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             Transaction t = session.beginTransaction();
             cliente = (Cliente) session.get(Cliente.class, id);
+            Hibernate.initialize(cliente.getDirecciones());
             t.commit();
         } catch (Exception e) {
             session.getTransaction().rollback();

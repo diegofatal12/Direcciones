@@ -113,7 +113,7 @@ public class ClienteController implements Serializable {
     //------------------------------------------------------------------------------------------------
     public String gestionarDirecciones() {
         if(registroSel!=null){
-            Session session = null;
+            /*Session session = null;
             try {
                 session = HibernateUtil.getSessionFactory().openSession();
                 session.beginTransaction();
@@ -125,7 +125,9 @@ public class ClienteController implements Serializable {
                 return null;
             } finally {
                 session.close();
-            }
+            }*/
+            ClienteDao cd =  new ClienteDao();
+            registroMod = cd.getOne(registroSel.getId());
         }
         return "/gestionarDirecciones";
     }

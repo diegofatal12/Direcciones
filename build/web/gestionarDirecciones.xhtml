@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:insert name="header">
+            <ui:include src="/template/header.xhtml"/>
+        </ui:insert>
+        <h:form id="formListadoDirecciones" style="font-size: 10pt; color: #045491">
+
+            <p:panelGrid columns="2" style="margin: 0 auto;">
+                <f:facet name="header">
+                    <h:outputText value="Cliente en cuestión" style="font-size: 13pt; color: #045491"/>
+                </f:facet>
+                <h:outputText value="Código"/>
+                <h:outputText value="#{clienteController.registroMod.id}"/>
+
+                <h:outputText value="Nombre:"/>
+                <h:outputText value="#{clienteController.registroMod.nombre}"/>
+
+                <h:outputText value="Apellido"/>
+                <h:outputText value="#{clienteController.registroMod.apellido}"/>
+            </p:panelGrid>
+            <p:dataTable 
+                id="tablaDirecciones" 
+                value="#{clienteController.registroMod.direcciones}" 
+                paginatorPosition="bottom" 
+                var="item" 
+                rowKey="#{item.id}" 
+                selectionMode="single" 
+                selection="#{clienteController.registroModDireccion}"  
+                paginator="true" 
+                rows="10" 
+                emptyMessage="No existen Direcciones"
+                style="font-size: 10pt; color: #045491"
+                >
+                <f:facet name="header">
+                    <h:outputText value="Direcciones del Cliente" style="font-size: 13pt; color: #045491"/>
+                </f:facet>
+                <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
+                <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
+                <p:column headerText="Código">
+                    <p:outputLabel value="#{item.id}"/>
+                </p:column>
+                <p:column headerText="Dirección">
+                    <p:outputLabel value="#{item.detalle}"/>
+                </p:column> 
+                <f:facet name="footer">
+
+                    <p:commandButton id="createButton" ajax="true" icon="ui-icon-plus"   value="Crear"
+                                     actionListener="#{clienteController.nuevaDireccion()}" 
+                                     oncomplete="PF('dialogoAgregar').show();" 
+
+                                     style="font-size: 10pt; color: #045491"/>
+
+
+                    <p:commandButton  id="editButton" ajax="true"  icon="ui-icon-pencil" value="Editar"                                 
+                                      oncomplete="PF('dialogoModificar').show();" update=":formModificar"
+                                      style="font-size: 10pt; color: #045491">
+
+                    </p:commandButton>
+
+                    <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Eliminar"
+                                     onclick="PF('cd').show()" disabled="#{empty clienteController.registroModDireccion}"
+                                     style="font-size: 10pt; color: #045491">
+                    </p:commandButton>
+                    <p:confirmDialog message="Está seguro de eliminar el registro seleccionado?" appendTo="@(body)"
+                                     header="Eliminar registro" severity="alert" widgetVar="cd" style="font-size: 10pt; color: #045491">
+                        <p:commandButton actionListener="#{clienteController.eliminaDireccion()}" 
+                                         update=":formListadoDirecciones:tablaDirecciones" value="Sí" oncomplete="PF('cd').hide()" style="font-size: 10pt; color: #045491"/>
+                        <p:commandButton value="No" onclick="PF('cd').hide();" type="button" style="font-size: 10pt; color: #045491"/>
+                    </p:confirmDialog>
+                </f:facet>         
+            </p:dataTable>
+            <p:commandButton action="#{clienteController.cancelar()}" value="Cancelar" /> 
+        </h:form>
+
+        <h:form id="formAgregar" style="font-size: 10pt; color: #045491">
+            <p:dialog id="dlgAgregar" header="Agregar dirección" widgetVar="dialogoAgregar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <p:panelGrid columns="2" style="margin: 0 auto;">                                
+                    <p:outputLabel value="Dirección:"/>
+                    <p:inputText value="#{clienteController.registroModDireccion.detalle}"/>
+                </p:panelGrid>
+                <p:commandButton  value="Guardar" actionListener="#{clienteController.agregarDireccionCliente()}" update=":formListadoDirecciones:tablaDirecciones" oncomplete="PF('dialogoAgregar').hide();"/>
+                <p:commandButton  value="Cancelar" onclick="PF('dialogoAgregar').hide();"/>
+            </p:dialog>
+        </h:form>
+        <h:form id="formEliminar" style="font-size: 10pt; color: #045491">
+            <p:dialog id="dlgEliminar" header="Eliminar Dirección" widgetVar="dialogoEliminar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <h:outputText value="Desea eliminar este registro?"/>
+                <p:commandButton  value="Si" actionListener="#{clienteController.eliminaDireccion()}" update=":formListadoDirecciones:tablaDirecciones" oncomplete="PF('dialogoEliminar').hide();"/>
+                <p:commandButton  value="No" onclick="PF('dialogoEliminar').hide();"/>
+            </p:dialog>
+        </h:form>
+        <h:form id="formModificar" style="font-size: 10pt; color: #045491">
+            <p:dialog id="dlgModificar" header="Modificar dirección" widgetVar="dialogoModificar" resizable="false" showEffect="fade" hideEffect="explode" modal="true">
+                <p:panelGrid columns="2" style="margin: 0 auto;">
+                    <p:panelGrid columns="2" style="margin: 0 auto;">                                
+                        <p:outputLabel value="Dirección:"/>
+                        <p:inputText value="#{clienteController.registroModDireccion.detalle}"/>
+                    </p:panelGrid>
+                </p:panelGrid>
+                <p:commandButton  value="Guardar" actionListener="#{clienteController.actualizaDireccionCliente()}" update=":formListadoDirecciones:tablaDirecciones" oncomplete="PF('dialogoModificar').hide();"/>
+                <p:commandButton  value="Cancelar" onclick="PF('dialogoModificar').hide();" disabled="#{empty clienteController.registroSel}"/>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+
